@@ -68,6 +68,10 @@ const getSitemapFile = (filename: string) => {
   return path.join(scullyConfig.outDir ?? "./", filename);
 };
 
+const getRobotsFile = () => {
+  return path.join(scullyConfig.outDir ?? "./", "robots.txt");
+};
+
 const loadMap = (filename: string) => {
   const file = getSitemapFile(filename);
   if ( fs.existsSync(file) ) {
@@ -99,6 +103,21 @@ const saveMap = (map: any, filename: string) => {
   fs.writeFileSync(file, xml);
   return rootElement;
 };
+
+const generateRobotsFile = (config: SitemapConfig) => {
+  let prefix = config.urlPrefix ?? defaultSitemapConfig.urlPrefix;
+  if (prefix.endsWith("/")) {
+    prefix = prefix.substring(0, prefix.length - 2);
+  }
+  const sitemapUri = `${prefix}/${config.sitemapFilename ?? defaultSitemapConfig.sitemapFilename}`;
+  // TODO: Remplacer par des rules (pour supporter plusieurs directives allow / disallow).
+  const allowAllGroup = [
+    "User-agent: *",
+    "Allow: /"
+  ];
+  const groups = [allowAllGroup.join("\n"), `Sitemap: ${sitemapUri}`]
+  fs.writeFileSync(getRobotsFile(), groups.join("\n\n"));
+}
 
 const parseXml = (xmlString: string) => {
   return xmlParser.parse(xmlString);
@@ -169,6 +188,12 @@ export const sitemapPlugin = async (routes?: HandledRoute[]): Promise<void> => {
     const rootElement = saveMap(maps[filename], filename);
     const routeCount = rootElement.children.length;
     log(`Wrote ${ routeCount } ${ pluralizer(routeCount, 'route', 'routes') } to ${ filename }`);
+  }
+
+  if (config.createRobotsFile) {
+    log('Generating robots.txt file');
+    generateRobotsFile(config)
+    log('Wrote robots.txt file');
   }
 
   log(`Finished @recursyve/scully-sitemap`);

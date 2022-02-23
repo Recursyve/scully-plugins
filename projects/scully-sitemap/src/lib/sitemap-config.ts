@@ -37,6 +37,9 @@ export class SitemapConfig {
   /** Where do you want to store the sitemap file? */
   sitemapFilename?: string;
 
+  /** Create a robots.txt file which includes the created sitemap **/
+  createRobotsFile?: boolean;
+
   /** Merge handled routes into existing sitemap file (if available)? */
   merge?: boolean;
 
@@ -66,6 +69,7 @@ export class SitemapConfig {
 export const defaultSitemapConfig: SitemapConfig = {
   urlPrefix: 'http://localhost',
   sitemapFilename: 'sitemap.xml',
+  createRobotsFile: false,
   merge: false,
   changeFreq: 'monthly',
   priority: '0.5',
