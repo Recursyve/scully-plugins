@@ -24,6 +24,8 @@ export class SitemapRoute {
   /** would you like to append a trailing slash to the url */
   trailingSlash?: boolean;
 
+  /** Last modification datetime (YYYY-MM-DDTHH:mm:ss.sssZ = date.toISOString()) */
+  lastMod?: string;
 }
 
 /**
@@ -48,6 +50,9 @@ export class SitemapConfig {
 
   /** A list of priorities to set based on number of segments in the route */
   priority?: string | string[];
+
+  /** Last modification datetime (YYYY-MM-DDTHH:mm:ss.sssZ = date.toISOString()) */
+  lastMod?: string;
 
   /** A list of routes not to include in the sitemap */
   ignoredRoutes?: string[];
