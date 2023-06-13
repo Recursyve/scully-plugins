@@ -40,13 +40,15 @@ setPluginConfig(SitemapPlugin, {
     trailingSlash: false,
     changeFreq: 'monthly',
     priority: ['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1', '0.0'],
-    ignoredRoutes: ['/404'],
+    ignoredRoutes: ['/404', '/testing/.*'],
+    lastMod: new Date().toISOString(),
     routes: {
         '/products/:productId': {
             changeFreq: 'daily',
             priority: '0.9',
             sitemapFilename: 'sitemap-products.xml',
-            merge: true
+            merge: true,
+            lastMod: new Date().toISOString()
         },
     }
 });

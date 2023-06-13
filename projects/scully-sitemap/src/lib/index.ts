@@ -48,7 +48,8 @@ const configForRoute = (config: SitemapConfig, route: HandledRoute) => {
           sitemapFilename: routeConfig.sitemapFilename || config.sitemapFilename,
           merge: routeConfig.merge || config.merge,
           changeFreq: routeConfig.changeFreq || config.changeFreq,
-          priority: routeConfig.priority || config.priority
+          priority: routeConfig.priority || config.priority,
+          lastMod: routeConfig.lastMod || config.lastMod
         };
       }
     }
@@ -60,7 +61,8 @@ const configForRoute = (config: SitemapConfig, route: HandledRoute) => {
     sitemapFilename: config.sitemapFilename,
     merge: config.merge,
     changeFreq: config.changeFreq,
-    priority: config.priority
+    priority: config.priority,
+    lastMod: config.lastMod
   };
 };
 
@@ -164,8 +166,14 @@ export const sitemapPlugin = async (routes?: HandledRoute[]): Promise<void> => {
   const maps = {};
 
   routes.forEach((route: HandledRoute) => {
-    if ( config.ignoredRoutes && config.ignoredRoutes.includes(route.route) ) {
-      return;
+    if ( config.ignoredRoutes ) {
+      const ignore = config.ignoredRoutes.reduce((prev, curr) => {
+        if (typeof curr === 'string') {
+          return prev || route.route === curr;
+        }
+        return prev || curr.test(route.route);
+      }, false);
+      if (ignore) return;
     }
     const routeConfig = configForRoute(config, route);
     const map = getMapForRoute(maps, routeConfig);
@@ -177,7 +185,7 @@ export const sitemapPlugin = async (routes?: HandledRoute[]): Promise<void> => {
     map[loc] = {
       loc,
       changefreq: routeConfig.changeFreq,
-      lastmod: today.toISOString(),
+      lastmod: routeConfig.lastMod ?? today.toISOString(),
       priority: priorityForLocation(route.route, routeConfig)
     };
   });
