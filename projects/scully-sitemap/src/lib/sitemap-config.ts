@@ -55,7 +55,7 @@ export class SitemapConfig {
   lastMod?: string;
 
   /** A list of routes not to include in the sitemap */
-  ignoredRoutes?: string[];
+  ignoredRoutes?: (string | RegExp)[];
 
   /** If `true`, the plugin will not log status messages to the console. */
   suppressLog?: boolean;
